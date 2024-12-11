@@ -218,23 +218,25 @@ export class {{repo}} {
         return await this.client.{{table}}.createMany(args);
     };
 
-    static createManyAndReturn = async (options: {
-        data: Prisma.{{repo}}CreateManyInput[];
-        select?: Prisma.{{repo}}Select;
-        include?: Prisma.{{repo}}Include;
-        // omit?: Prisma.{{repo}}Omit;
-        // skipDuplicates?: boolean
-    }) => {
-        const args: Prisma.{{repo}}CreateManyAndReturnArgs = {
-            data: options.data,
-            ...(options.select ? { select: options.select } : {}),
-            ...(options.include ? { include: options.include } : {}),
-            // omit: options.omit,
-            // skipDuplicates: options.skipDuplicates,
-        };
-
-        return await this.client.{{table}}.createManyAndReturn(args);
-    };
+    // createManyAndReturn is only available in Prisma ORM version 5.14.0 and up.
+    // createManyAndReturn is only available for PostgreSQL, CockroachDB, and SQLite.
+    // static createManyAndReturn = async (options: {
+    //     data: Prisma.{{repo}}CreateManyInput[];
+    //     select?: Prisma.{{repo}}Select;
+    //     include?: Prisma.{{repo}}Include;
+    //     // omit?: Prisma.{{repo}}Omit;
+    //     // skipDuplicates?: boolean
+    // }) => {
+    //     const args: Prisma.{{repo}}CreateManyAndReturnArgs = {
+    //         data: options.data,
+    //         ...(options.select ? { select: options.select } : {}),
+    //         ...(options.include ? { include: options.include } : {}),
+    //         // omit: options.omit,
+    //         // skipDuplicates: options.skipDuplicates,
+    //     };
+    //
+    //     return await this.client.{{table}}.createManyAndReturn(args);
+    // };
 
     static updateMany = async (options: {
         data: Prisma.{{repo}}UpdateManyMutationInput;
