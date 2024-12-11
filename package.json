@@ -1,6 +1,6 @@
 {
     "name": "prisma-repository-generator",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "description": "A utility to generate repository classes based on Prisma models.",
     "author": "Rann-Studio",
     "license": "ISC",

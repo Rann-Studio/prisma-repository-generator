@@ -18,7 +18,7 @@ npm install @prisma/client
 
 #### 2. Install Prisma Repository Generator
 ```console
-npm install prisma-repository-generator --save-dev
+npm install prisma-repository-generator
 ```
 
 ## ⚙️ Setup Instructions
