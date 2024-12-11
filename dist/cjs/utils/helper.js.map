@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../esm/utils/helper.js"],
-  "sourcesContent": ["export const upperCaseFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);\nexport const lowerCaseFirst = (str) => str.charAt(0).toLocaleLowerCase() + str.slice(1);\nexport const prismaTypeToTs = (type) => {\n    switch (type) {\n        case 'Int':\n            return 'number';\n        case 'String':\n            return 'string';\n        case 'Boolean':\n            return 'boolean';\n        case 'DateTime':\n            return 'Date';\n        default:\n            return 'unknown';\n    }\n};\n"],
-  "mappings": ";;;;;;;;;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAO,MAAM,iBAAiB,wBAAC,QAAQ,IAAI,OAAO,CAAC,EAAE,YAAY,IAAI,IAAI,MAAM,CAAC,GAAlD;AACvB,MAAM,iBAAiB,wBAAC,QAAQ,IAAI,OAAO,CAAC,EAAE,kBAAkB,IAAI,IAAI,MAAM,CAAC,GAAxD;AACvB,MAAM,iBAAiB,wBAAC,SAAS;AACpC,UAAQ,MAAM;AAAA,IACV,KAAK;AACD,aAAO;AAAA,IACX,KAAK;AACD,aAAO;AAAA,IACX,KAAK;AACD,aAAO;AAAA,IACX,KAAK;AACD,aAAO;AAAA,IACX;AACI,aAAO;AAAA,EACf;AACJ,GAb8B;",
-  "names": []
-}

@@ -2,3 +2,4 @@
 /.env
 /prisma
 /package-lock.json
+/.editorconfig

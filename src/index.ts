@@ -1,75 +1,79 @@
 import { Prisma } from "@prisma/client";
-import fs from "fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import Handlebars from "handlebars";
-import path from "path";
-import prettier from "prettier";
-import { lowerCaseFirst } from "./utils/helper";
+import { resolve } from "path";
+import { format } from "prettier";
 
-// Save repository file to the file system with formatting
-const saveRepository = async (repo: string, content: string) => {
-    const repositoriesDir = path.resolve(process.cwd(), "generated_repositories");
+function lowerCaseFirst(str: string) {
+    return str.charAt(0).toLocaleLowerCase() + str.slice(1);
+}
 
-    if (!fs.existsSync(repositoriesDir)) {
-        fs.mkdirSync(repositoriesDir);
+function ensureDirectoryExists(dirPath: string) {
+    if (!existsSync(dirPath)) {
+        mkdirSync(dirPath, { recursive: true });
     }
+}
 
-    const formattedCode = await prettier.format(content, {
+function saveFile(filePath: string, content: string) {
+    writeFileSync(filePath, content, "utf8");
+    console.log(`Saved: ${filePath}`);
+}
+
+async function formatCode(content: string) {
+    return await format(content, {
         parser: "typescript",
         semi: true,
         singleQuote: true,
         useTabs: true,
         tabWidth: 4,
     });
+}
 
-    const filePath = path.resolve(repositoriesDir, `${lowerCaseFirst(repo)}.repository.ts`);
-    fs.writeFileSync(filePath, formattedCode, "utf8");
-    console.log(`Saved: ${filePath}`);
-};
-
-const savePrismaUtils = async () => {
-    const repositoriesDir = path.resolve(process.cwd(), "generated_repositories");
-
-    if (!fs.existsSync(repositoriesDir)) {
-        fs.mkdirSync(repositoriesDir);
-    }
-
-    const prismaUtilsContent = `import { PrismaClient } from "@prisma/client"; export const client = new PrismaClient();`;
-    const formattedCode = await prettier.format(prismaUtilsContent, {
-        parser: "typescript",
-        semi: true,
-        singleQuote: true,
-        useTabs: true,
-        tabWidth: 4,
-    });
-
-    const filePath = path.resolve(repositoriesDir, `prisma.utils.ts`);
-    fs.writeFileSync(filePath, formattedCode, "utf8");
-    console.log(`Saved: ${filePath}`);
-};
-
-const compileTemplate = (templateFile: string) => {
-    const templatePath = path.resolve(__dirname, "../template", templateFile);
-    const templateSource = fs.readFileSync(templatePath, "utf8");
+function compileTemplate() {
+    const templatePath = resolve(__dirname, "template.hbs");
+    const templateSource = readFileSync(templatePath, "utf8");
     return Handlebars.compile(templateSource, { noEscape: true });
-};
+}
 
-export const generateRepositories = async () => {
-    // Safety check to ensure Prisma DMMF is initialized
-    if (!Prisma.dmmf || !Prisma.dmmf.datamodel) {
-        throw new Error("Prisma.dmmf or Prisma.dmmf.datamodel is not available.\nMake sure you run `npx prisma migrate` after setting up your schema.");
+async function savePrismaUtils() {
+    const dir = resolve(process.cwd(), "generated_repositories");
+    ensureDirectoryExists(dir);
+
+    const content = `import { PrismaClient } from "@prisma/client"; export const client = new PrismaClient();`;
+    const formattedCode = await formatCode(content);
+    const filePath = resolve(dir, "prisma.utils.ts");
+
+    saveFile(filePath, formattedCode);
+}
+
+async function saveRepository(repo: string, content: string) {
+    const dir = resolve(process.cwd(), "generated_repositories");
+    ensureDirectoryExists(dir);
+
+    const formattedCode = await formatCode(content);
+    const filePath = resolve(dir, `${lowerCaseFirst(repo)}.repository.ts`);
+
+    saveFile(filePath, formattedCode);
+}
+
+export async function generateRepositories() {
+    if (!Prisma.dmmf?.datamodel) {
+        throw new Error(`Prisma.dmmf or Prisma.dmmf.datamodel is not available. Run "npx prisma migrate dev --name init" to ensure schema is initialized.`);
     }
 
     const models = Prisma.dmmf.datamodel.models;
-    const template = compileTemplate("repository.hbs");
+    const template = compileTemplate();
 
     for (const model of models) {
         const content = template({
             repo: model.name,
             table: lowerCaseFirst(model.name),
         });
+
         await saveRepository(model.name, content);
     }
 
     await savePrismaUtils();
+
     console.log("Repositories generated successfully.");
-};
+}

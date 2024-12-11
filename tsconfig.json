@@ -1,18 +1,14 @@
 {
-	"compilerOptions": {
-		"declaration": true,
-		"declarationDir": "dist/types",
-		"esModuleInterop": true,
-		"lib": ["ES2021"],
-		"module": "ESNext",
-		"moduleResolution": "Node",
-		"outDir": "dist/esm",
-		"target": "ES2021"
-	},
-	"tsc-alias": {
-		"resolveFullPaths": true,
-		"verbose": true
-	},
-	"include": ["src/**/*.ts", "src/**/*.hbs", "src/bin/cli.js"],
-	"exclude": ["node_modules", "test"]
+    "compilerOptions": {
+        "declaration": true,
+        "declarationDir": "dist/types",
+        "esModuleInterop": true,
+        "lib": ["ES2021"],
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "outDir": "./dist",
+        "target": "ES2021"
+    },
+    "include": ["src/**/*.ts"],
+    "exclude": ["node_modules"]
 }
