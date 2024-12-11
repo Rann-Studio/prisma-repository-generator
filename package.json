@@ -1,6 +1,6 @@
 {
     "name": "prisma-repository-generator",
-    "version": "3.0.4",
+    "version": "3.0.5",
     "description": "A utility to generate repository classes based on Prisma models.",
     "author": "Rann-Studio",
     "license": "ISC",
@@ -21,11 +21,13 @@
         "build": "tsc",
         "postbuild": "copyfiles -u 1 \"src/*.hbs\" \"dist\""
     },
-    "devDependencies": {
+    "dependencies": {
         "@prisma/client": "^6.0.1",
-        "copyfiles": "^2.4.1",
         "handlebars": "^4.7.8",
-        "prettier": "^3.4.2",
+        "prettier": "^3.4.2"
+    },
+    "devDependencies": {
+        "copyfiles": "^2.4.1",
         "ts-node": "^10.9.2",
         "typescript": "^5.7.2"
     },
