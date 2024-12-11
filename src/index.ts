@@ -56,7 +56,7 @@ const compileTemplate = (templateFile: string) => {
 export const generateRepositories = async () => {
     // Safety check to ensure Prisma DMMF is initialized
     if (!Prisma.dmmf || !Prisma.dmmf.datamodel) {
-        throw new Error("Prisma.dmmf or Prisma.dmmf.datamodel is not available. Make sure you run `prisma generate` after setting up your schema.");
+        throw new Error("Prisma.dmmf or Prisma.dmmf.datamodel is not available.\nMake sure you run `npx prisma migrate` after setting up your schema.");
     }
 
     const models = Prisma.dmmf.datamodel.models;

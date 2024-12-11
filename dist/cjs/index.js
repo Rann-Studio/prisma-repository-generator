@@ -32,10 +32,10 @@ __export(esm_exports, {
 });
 module.exports = __toCommonJS(esm_exports);
 var import_client = require("@prisma/client");
-var import_fs = __toESM(require("fs"));
-var import_handlebars = __toESM(require("handlebars"));
-var import_path = __toESM(require("path"));
-var import_prettier = __toESM(require("prettier"));
+var import_fs = __toESM(require("fs"), 1);
+var import_handlebars = __toESM(require("handlebars"), 1);
+var import_path = __toESM(require("path"), 1);
+var import_prettier = __toESM(require("prettier"), 1);
 var import_helper = require("./utils/helper.js");
 const saveRepository = /* @__PURE__ */ __name(async (repo, content) => {
   const repositoriesDir = import_path.default.resolve(process.cwd(), "generated_repositories");
@@ -77,7 +77,7 @@ const compileTemplate = /* @__PURE__ */ __name((templateFile) => {
 }, "compileTemplate");
 const generateRepositories = /* @__PURE__ */ __name(async () => {
   if (!import_client.Prisma.dmmf || !import_client.Prisma.dmmf.datamodel) {
-    throw new Error("Prisma.dmmf or Prisma.dmmf.datamodel is not available. Make sure you run `prisma generate` after setting up your schema.");
+    throw new Error("Prisma.dmmf or Prisma.dmmf.datamodel is not available.\nMake sure you run `npx prisma migrate` after setting up your schema.");
   }
   const models = import_client.Prisma.dmmf.datamodel.models;
   const template = compileTemplate("repository.hbs");
