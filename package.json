@@ -14,12 +14,9 @@
     "module": "./dist/index.js",
     "types": "./dist/types/index.d.ts",
     "exports": {
-		"./package.json": "./package.json",
-		".": {
-			"types": "./dist/types/index.d.ts",
-			"import": "./dist/index.js"
-		}
-	},
+        ".": "./dist/index.js",
+        "./package.json": "./package.json"
+    },
     "scripts": {
         "build": "tsc",
         "postbuild": "copyfiles -u 1 \"src/*.hbs\" \"dist\""
