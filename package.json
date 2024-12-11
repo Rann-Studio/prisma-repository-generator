@@ -13,7 +13,7 @@
     "main": "./dist/index.js",
     "scripts": {
         "build": "tsc",
-        "postbuild": "copyfiles -u 1 \"src/template/*.hbs\" \"dist\""
+        "postbuild": "copyfiles -u 1 \"src/*.hbs\" \"dist\""
     },
     "devDependencies": {
         "@prisma/client": "^6.0.1",
