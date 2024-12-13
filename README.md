@@ -89,7 +89,6 @@ This command will automatically run the Prisma Repository Generator. You don’t
 - [x] `upsert` : Insert or update a record based on a unique condition.
 - [x] `delete` : Delete a single record by unique identifier.
 - [x] `createMany` : Insert multiple records at once.
-- [x] `createManyAndReturn` : Insert multiple records and return them.
 - [x] `updateMany` : Update multiple records with specific conditions.
 - [x] `deleteMany` : Delete multiple records based on optional filtering.
 - [x] `count` : Count records with optional filtering.

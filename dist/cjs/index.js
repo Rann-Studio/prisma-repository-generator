@@ -33,7 +33,7 @@ __export(esm_exports, {
 module.exports = __toCommonJS(esm_exports);
 var import_client = require("@prisma/client");
 var import_fs = require("fs");
-var import_handlebars = __toESM(require("handlebars"), 1);
+var import_handlebars = __toESM(require("handlebars"));
 var import_path = require("path");
 var import_prettier = require("prettier");
 function lowerCaseFirst(str) {
