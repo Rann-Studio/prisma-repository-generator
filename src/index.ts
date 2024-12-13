@@ -14,7 +14,11 @@ function ensureDirectoryExists(dirPath: string) {
     }
 }
 
-function saveFile(filePath: string, content: string) {
+function saveFile(filePath: string, content: string, overwrite: boolean) {
+    if (existsSync(filePath) && overwrite === false) {
+        console.log(`[OVERWRITE DISABLED] Skipped: ${filePath} already exists.`);
+        return;
+    }
     writeFileSync(filePath, content, "utf8");
     console.log(`Saved: ${filePath}`);
 }
@@ -30,12 +34,12 @@ async function formatCode(content: string) {
 }
 
 function compileTemplate() {
-    const templatePath = resolve(__dirname, "template.hbs");
+    const templatePath = resolve(__dirname, "..", "template", "template.hbs");
     const templateSource = readFileSync(templatePath, "utf8");
     return Handlebars.compile(templateSource, { noEscape: true });
 }
 
-async function savePrismaUtils() {
+async function savePrismaUtils(overwrite: boolean) {
     const dir = resolve(process.cwd(), "generated_repositories");
     ensureDirectoryExists(dir);
 
@@ -43,20 +47,20 @@ async function savePrismaUtils() {
     const formattedCode = await formatCode(content);
     const filePath = resolve(dir, "prisma.utils.ts");
 
-    saveFile(filePath, formattedCode);
+    saveFile(filePath, formattedCode, overwrite);
 }
 
-async function saveRepository(repo: string, content: string) {
+async function saveRepository(repo: string, content: string, overwrite: boolean) {
     const dir = resolve(process.cwd(), "generated_repositories");
     ensureDirectoryExists(dir);
 
     const formattedCode = await formatCode(content);
     const filePath = resolve(dir, `${lowerCaseFirst(repo)}.repository.ts`);
 
-    saveFile(filePath, formattedCode);
+    saveFile(filePath, formattedCode, overwrite);
 }
 
-export async function generateRepositories() {
+export async function generateRepositories(overwrite: boolean = false) {
     if (!Prisma.dmmf?.datamodel) {
         throw new Error(`Prisma.dmmf or Prisma.dmmf.datamodel is not available. Run "npx prisma migrate dev --name init" to ensure schema is initialized.`);
     }
@@ -70,10 +74,10 @@ export async function generateRepositories() {
             table: lowerCaseFirst(model.name),
         });
 
-        await saveRepository(model.name, content);
+        await saveRepository(model.name, content, overwrite);
     }
 
-    await savePrismaUtils();
+    await savePrismaUtils(overwrite);
 
     console.log("Repositories generated successfully.");
 }

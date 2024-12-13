@@ -1,6 +1,6 @@
 {
     "name": "prisma-repository-generator",
-    "version": "3.1.0",
+    "version": "3.1.1",
     "description": "A utility to generate repository classes based on Prisma models.",
     "author": "Rann-Studio",
     "license": "ISC",
@@ -10,16 +10,25 @@
         "prisma-client",
         "database"
     ],
-    "main": "./dist/index.js",
-    "module": "./dist/index.js",
+    "main": "./dist/cjs/index.js",
+    "module": "./dist/esm/index.js",
     "types": "./dist/types/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "bin": "./dist/bin/cli.js",
     "exports": {
-        ".": "./dist/index.js",
-        "./package.json": "./package.json"
+        "./package.json": "./package.json",
+        ".": {
+            "types": "./dist/types/index.d.ts",
+            "require": "./dist/cjs/index.js",
+            "import": "./dist/esm/index.js"
+        }
     },
     "scripts": {
-        "build": "tsc",
-        "postbuild": "copyfiles -u 1 \"src/*.hbs\" \"dist\""
+        "build": "tsc && tsc-alias -p tsconfig.json",
+        "postbuild": "esm2cjs --in dist/esm --out dist/cjs -l error && npm run copy-template",
+        "copy-template": "copyfiles -u 1 \"src/*.hbs\" \"dist/template\""
     },
     "dependencies": {
         "@prisma/client": "^6.0.1",
@@ -27,8 +36,10 @@
         "prettier": "^3.4.2"
     },
     "devDependencies": {
+        "@alcalzone/esm2cjs": "^1.4.1",
         "copyfiles": "^2.4.1",
         "ts-node": "^10.9.2",
+        "tsc-alias": "^1.8.10",
         "typescript": "^5.7.2"
     },
     "repository": {
