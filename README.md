@@ -52,7 +52,7 @@ This will create the necessary database structure.
 > Make sure you run migrations (npx prisma migrate dev --name init) before using the repository generator to avoid runtime issues.
 
 
-#### 3. Generate Repositories
+### 3. Generate Repositories
 Import and execute the repository generator with the following:
 
 ```typescript
@@ -65,8 +65,17 @@ generateRepositories().catch((err) => {
 
 This will create repository files based on your Prisma models.
 
-> ✂️ **SHORTCUT**\
-> npx prisma-repository-generator
+## ✂️ Shortcut
+To simplify and speed up the repository generation process without needing to write extra code, use the following command directly from your terminal:
+
+```console
+npx prisma-repository-generator
+```
+
+This command will automatically run the Prisma Repository Generator. You don’t need to import or write additional code in your project. Just run this command in your project directory after ensuring Prisma is set up correctly.
+
+> ⚠️ **IMPORTANT**\
+> Make sure you run migrations (npx prisma migrate dev --name init) before using this shortcut to avoid to avoid runtime issues.
 
 ## ✅Features
 

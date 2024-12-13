@@ -92,7 +92,6 @@ async function generateRepositories(overwrite = false) {
   if (!import_client.Prisma.dmmf?.datamodel) {
     throw new Error(`Run "npx prisma migrate dev --name init" to ensure schema is initialized.`);
   }
-  console.log(overwrite ? "[OVERWRITE ENABLED]" : "[OVERWRITE DISABLED]");
   const models = import_client.Prisma.dmmf.datamodel.models;
   const template = compileTemplate();
   for (const model of models) {
