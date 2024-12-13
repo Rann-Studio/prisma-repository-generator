@@ -52,7 +52,7 @@ This will create the necessary database structure.
 > Make sure you run migrations (npx prisma migrate dev --name init) before using the repository generator to avoid runtime issues.
 
 
-### 3. Generate Repositories
+#### 3. Generate Repositories
 Import and execute the repository generator with the following:
 
 ```typescript
