@@ -13,7 +13,7 @@ function ensureDirectoryExists(dirPath) {
 }
 function saveFile(filePath, content, overwrite) {
     if (existsSync(filePath) && overwrite === false) {
-        console.log(`[OVERWRITE DISABLED] Skipped: ${filePath} already exists.`);
+        console.log(`Skipped: ${filePath} already exists.`);
         return;
     }
     writeFileSync(filePath, content, "utf8");
@@ -50,8 +50,9 @@ async function saveRepository(repo, content, overwrite) {
 }
 export async function generateRepositories(overwrite = false) {
     if (!Prisma.dmmf?.datamodel) {
-        throw new Error(`Prisma.dmmf or Prisma.dmmf.datamodel is not available. Run "npx prisma migrate dev --name init" to ensure schema is initialized.`);
+        throw new Error(`Run "npx prisma migrate dev --name init" to ensure schema is initialized.`);
     }
+    console.log(overwrite ? '[OVERWRITE ENABLED]' : '[OVERWRITE DISABLED]');
     const models = Prisma.dmmf.datamodel.models;
     const template = compileTemplate();
     for (const model of models) {

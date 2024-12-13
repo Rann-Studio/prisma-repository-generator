@@ -58,18 +58,15 @@ Import and execute the repository generator with the following:
 ```typescript
 import { generateRepositories } from 'prisma-repository-generator';
 
-// Generate repositories
-generateRepositories()
-  .then(() => {
-    console.log('Repositories generated successfully!');
-  })
-  .catch(err => {
-    console.error('Error generating repositories:', err);
-  });
+generateRepositories().catch((err) => {
+    console.error("Error generating repositories:", err.message);
+});
 ```
 
 This will create repository files based on your Prisma models.
 
+> ✂️ **SHORTCUT**\
+> npx prisma-repository-generator
 
 ## ✅Features
 

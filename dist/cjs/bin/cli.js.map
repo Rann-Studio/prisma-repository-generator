@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../esm/bin/cli.js"],
+  "sourcesContent": ["#!/usr/bin/env ts-node\nimport { generateRepositories } from \"../index.js\";\ngenerateRepositories().catch((err) => {\n    console.error(\"Error generating repositories:\", err.message);\n});\n"],
+  "mappings": ";AACA,eAAqC;AAAA,IACrC,+BAAqB,EAAE,MAAM,CAAC,QAAQ;AAClC,UAAQ,MAAM,kCAAkC,IAAI,OAAO;AAC/D,CAAC;",
+  "names": []
+}

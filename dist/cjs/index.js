@@ -33,7 +33,7 @@ __export(esm_exports, {
 module.exports = __toCommonJS(esm_exports);
 var import_client = require("@prisma/client");
 var import_fs = require("fs");
-var import_handlebars = __toESM(require("handlebars"));
+var import_handlebars = __toESM(require("handlebars"), 1);
 var import_path = require("path");
 var import_prettier = require("prettier");
 function lowerCaseFirst(str) {
@@ -48,7 +48,7 @@ function ensureDirectoryExists(dirPath) {
 __name(ensureDirectoryExists, "ensureDirectoryExists");
 function saveFile(filePath, content, overwrite) {
   if ((0, import_fs.existsSync)(filePath) && overwrite === false) {
-    console.log(`[OVERWRITE DISABLED] Skipped: ${filePath} already exists.`);
+    console.log(`Skipped: ${filePath} already exists.`);
     return;
   }
   (0, import_fs.writeFileSync)(filePath, content, "utf8");
@@ -90,8 +90,9 @@ async function saveRepository(repo, content, overwrite) {
 __name(saveRepository, "saveRepository");
 async function generateRepositories(overwrite = false) {
   if (!import_client.Prisma.dmmf?.datamodel) {
-    throw new Error(`Prisma.dmmf or Prisma.dmmf.datamodel is not available. Run "npx prisma migrate dev --name init" to ensure schema is initialized.`);
+    throw new Error(`Run "npx prisma migrate dev --name init" to ensure schema is initialized.`);
   }
+  console.log(overwrite ? "[OVERWRITE ENABLED]" : "[OVERWRITE DISABLED]");
   const models = import_client.Prisma.dmmf.datamodel.models;
   const template = compileTemplate();
   for (const model of models) {
