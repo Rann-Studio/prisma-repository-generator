@@ -1,1 +1,1 @@
-export declare function generateRepositories(overwrite?: boolean): Promise<void>;
+export declare const generateRepositories: (overwrite?: boolean) => Promise<void>;

@@ -36,75 +36,116 @@ var import_fs = require("fs");
 var import_handlebars = __toESM(require("handlebars"));
 var import_path = require("path");
 var import_prettier = require("prettier");
-function lowerCaseFirst(str) {
-  return str.charAt(0).toLocaleLowerCase() + str.slice(1);
-}
-__name(lowerCaseFirst, "lowerCaseFirst");
-function ensureDirectoryExists(dirPath) {
+const toPascalCase = /* @__PURE__ */ __name((str) => str.charAt(0).toUpperCase() + str.slice(1), "toPascalCase");
+const toCamelCase = /* @__PURE__ */ __name((str) => str.charAt(0).toLowerCase() + str.slice(1), "toCamelCase");
+const convertPrismaType = /* @__PURE__ */ __name((type) => {
+  switch (type) {
+    case "BigInt":
+      return "bigint";
+    case "Boolean":
+      return "boolean";
+    case "Bytes":
+      return "Uint8Array";
+    case "DateTime":
+      return "Date";
+    case "Decimal":
+      return "string";
+    case "Float":
+      return "number";
+    case "Int":
+      return "number";
+    case "Json":
+      return "object";
+    case "String":
+      return "string";
+    default:
+      return "unknown";
+  }
+}, "convertPrismaType");
+const ensureDirectory = /* @__PURE__ */ __name((dirPath) => {
   if (!(0, import_fs.existsSync)(dirPath)) {
     (0, import_fs.mkdirSync)(dirPath, { recursive: true });
   }
-}
-__name(ensureDirectoryExists, "ensureDirectoryExists");
-function saveFile(filePath, content, overwrite) {
-  if ((0, import_fs.existsSync)(filePath) && overwrite === false) {
+}, "ensureDirectory");
+const formatCode = /* @__PURE__ */ __name(async (content) => await (0, import_prettier.format)(content, {
+  parser: "typescript",
+  semi: true,
+  singleQuote: true,
+  useTabs: true,
+  tabWidth: 4
+}), "formatCode");
+const writeFile = /* @__PURE__ */ __name((filePath, content, overwrite) => {
+  if ((0, import_fs.existsSync)(filePath) && !overwrite) {
     console.log(`Skipped: ${filePath} already exists.`);
     return;
   }
   (0, import_fs.writeFileSync)(filePath, content, "utf8");
   console.log(`Saved: ${filePath}`);
-}
-__name(saveFile, "saveFile");
-async function formatCode(content) {
-  return await (0, import_prettier.format)(content, {
-    parser: "typescript",
-    semi: true,
-    singleQuote: true,
-    useTabs: true,
-    tabWidth: 4
-  });
-}
-__name(formatCode, "formatCode");
-function compileTemplate() {
-  const templatePath = (0, import_path.resolve)(__dirname, "..", "template", "template.hbs");
-  const templateSource = (0, import_fs.readFileSync)(templatePath, "utf8");
-  return import_handlebars.default.compile(templateSource, { noEscape: true });
-}
-__name(compileTemplate, "compileTemplate");
-async function savePrismaUtils(overwrite) {
-  const dir = (0, import_path.resolve)(process.cwd(), "generated_repositories");
-  ensureDirectoryExists(dir);
+}, "writeFile");
+const compileTemplate = /* @__PURE__ */ __name((templatePath) => {
+  const source = (0, import_fs.readFileSync)(templatePath, "utf8");
+  return import_handlebars.default.compile(source, { noEscape: true });
+}, "compileTemplate");
+const generateFindByIdMethod = /* @__PURE__ */ __name((upperKey, lowerKey, keyType, table) => `
+static findBy${upperKey} = async (${lowerKey}: ${keyType}) => {
+    return await this.client.${table}.findFirst({ where: { ${lowerKey} } });
+};
+`, "generateFindByIdMethod");
+const generateFindByUniqueMethod = /* @__PURE__ */ __name((upperKey, lowerKey, keyType, table) => `
+static findBy${upperKey} = async (${lowerKey}: ${keyType}) => {
+    return await this.client.${table}.findFirst({ where: { ${lowerKey} } });
+};
+`, "generateFindByUniqueMethod");
+const saveRepository = /* @__PURE__ */ __name(async (repo, content, overwrite) => {
+  const dir = (0, import_path.resolve)(process.cwd(), "PRG_repositories");
+  ensureDirectory(dir);
+  const formattedContent = await formatCode(content);
+  const filePath = (0, import_path.resolve)(dir, `${toCamelCase(repo)}.repository.ts`);
+  writeFile(filePath, formattedContent, overwrite);
+}, "saveRepository");
+const savePrismaUtils = /* @__PURE__ */ __name(async (overwrite) => {
+  const dir = (0, import_path.resolve)(process.cwd(), "PRG_repositories");
+  ensureDirectory(dir);
   const content = `import { PrismaClient } from "@prisma/client"; export const client = new PrismaClient();`;
-  const formattedCode = await formatCode(content);
+  const formattedContent = await formatCode(content);
   const filePath = (0, import_path.resolve)(dir, "prisma.utils.ts");
-  saveFile(filePath, formattedCode, overwrite);
-}
-__name(savePrismaUtils, "savePrismaUtils");
-async function saveRepository(repo, content, overwrite) {
-  const dir = (0, import_path.resolve)(process.cwd(), "generated_repositories");
-  ensureDirectoryExists(dir);
-  const formattedCode = await formatCode(content);
-  const filePath = (0, import_path.resolve)(dir, `${lowerCaseFirst(repo)}.repository.ts`);
-  saveFile(filePath, formattedCode, overwrite);
-}
-__name(saveRepository, "saveRepository");
-async function generateRepositories(overwrite = false) {
+  writeFile(filePath, formattedContent, overwrite);
+}, "savePrismaUtils");
+const replacePlaceholders = /* @__PURE__ */ __name(async (filePath, idContent, uniqueContent, overwrite) => {
+  if ((0, import_fs.existsSync)(filePath) && !overwrite)
+    return;
+  const fileData = (0, import_fs.readFileSync)(filePath, "utf8");
+  const updatedData = fileData.replace(/\/\/ PRG_FIND_BY_ID/g, idContent).replace(/\/\/ PRG_FIND_BY_UNIQUE/g, uniqueContent);
+  const formattedCode = await formatCode(updatedData);
+  (0, import_fs.writeFileSync)(filePath, formattedCode, "utf8");
+}, "replacePlaceholders");
+const generateRepositories = /* @__PURE__ */ __name(async (overwrite = false) => {
   if (!import_client.Prisma.dmmf?.datamodel) {
-    throw new Error(`Run "npx prisma migrate dev --name init" to ensure schema is initialized.`);
+    throw new Error(`Ensure schema is initialized by running "npx prisma migrate dev --name init".`);
   }
-  const models = import_client.Prisma.dmmf.datamodel.models;
-  const template = compileTemplate();
+  const template = compileTemplate((0, import_path.resolve)(__dirname, "..", "template", "template.hbs"));
+  const models = import_client.Prisma.dmmf?.datamodel?.models || [];
+  await savePrismaUtils(overwrite);
   for (const model of models) {
-    const content = template({
+    let findByIdMethods = "";
+    let findByUniqueMethods = "";
+    model.fields.forEach((field) => {
+      if (field.kind === "scalar" && field.isId) {
+        findByIdMethods += generateFindByIdMethod(toPascalCase(field.name), field.name, convertPrismaType(field.type), toCamelCase(model.name));
+      }
+      if (field.kind === "scalar" && field.isUnique) {
+        findByUniqueMethods += generateFindByUniqueMethod(toPascalCase(field.name), field.name, convertPrismaType(field.type), toCamelCase(model.name));
+      }
+    });
+    let content = template({
       repo: model.name,
-      table: lowerCaseFirst(model.name)
+      table: toCamelCase(model.name)
     });
     await saveRepository(model.name, content, overwrite);
+    const filePath = (0, import_path.resolve)(process.cwd(), "PRG_repositories", `${toCamelCase(model.name)}.repository.ts`);
+    await replacePlaceholders(filePath, findByIdMethods, findByUniqueMethods, overwrite);
   }
-  await savePrismaUtils(overwrite);
-  console.log("Repositories generated successfully.");
-}
-__name(generateRepositories, "generateRepositories");
+}, "generateRepositories");
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   generateRepositories
