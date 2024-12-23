@@ -76,9 +76,7 @@ const savePrismaUtils = async (overwrite) => {
     const filePath = resolve(dir, "prisma.utils.ts");
     writeFile(filePath, formattedContent, overwrite);
 };
-const replacePlaceholders = async (filePath, idContent, uniqueContent, overwrite) => {
-    if (existsSync(filePath) && !overwrite)
-        return;
+const replacePlaceholders = async (filePath, idContent, uniqueContent) => {
     const fileData = readFileSync(filePath, "utf8");
     const updatedData = fileData.replace(/\/\/ PRG_FIND_BY_ID/g, idContent).replace(/\/\/ PRG_FIND_BY_UNIQUE/g, uniqueContent);
     const formattedCode = await formatCode(updatedData);
@@ -108,6 +106,6 @@ export const generateRepositories = async (overwrite = false) => {
         });
         await saveRepository(model.name, content, overwrite);
         const filePath = resolve(process.cwd(), "PRG_repositories", `${toCamelCase(model.name)}.repository.ts`);
-        await replacePlaceholders(filePath, findByIdMethods, findByUniqueMethods, overwrite);
+        await replacePlaceholders(filePath, findByIdMethods, findByUniqueMethods);
     }
 };

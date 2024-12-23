@@ -111,9 +111,7 @@ const savePrismaUtils = /* @__PURE__ */ __name(async (overwrite) => {
   const filePath = (0, import_path.resolve)(dir, "prisma.utils.ts");
   writeFile(filePath, formattedContent, overwrite);
 }, "savePrismaUtils");
-const replacePlaceholders = /* @__PURE__ */ __name(async (filePath, idContent, uniqueContent, overwrite) => {
-  if ((0, import_fs.existsSync)(filePath) && !overwrite)
-    return;
+const replacePlaceholders = /* @__PURE__ */ __name(async (filePath, idContent, uniqueContent) => {
   const fileData = (0, import_fs.readFileSync)(filePath, "utf8");
   const updatedData = fileData.replace(/\/\/ PRG_FIND_BY_ID/g, idContent).replace(/\/\/ PRG_FIND_BY_UNIQUE/g, uniqueContent);
   const formattedCode = await formatCode(updatedData);
@@ -143,7 +141,7 @@ const generateRepositories = /* @__PURE__ */ __name(async (overwrite = false) =>
     });
     await saveRepository(model.name, content, overwrite);
     const filePath = (0, import_path.resolve)(process.cwd(), "PRG_repositories", `${toCamelCase(model.name)}.repository.ts`);
-    await replacePlaceholders(filePath, findByIdMethods, findByUniqueMethods, overwrite);
+    await replacePlaceholders(filePath, findByIdMethods, findByUniqueMethods);
   }
 }, "generateRepositories");
 // Annotate the CommonJS export names for ESM import in node:
